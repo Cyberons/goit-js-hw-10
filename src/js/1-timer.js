@@ -22,28 +22,26 @@ const options = {
   minuteIncrement: 1,
         
   onClose(selectedDates) {
-    const userDate = new Date(selectedDates[0]).getTime();
-    const startDate = Date.now();
-              
-    if (userDate > startDate) {
-      startBtn.disabled = false;
-      delta = userDate - startDate;
-      updateClockface(convertMs(delta));
-      startTimer();
-    
-                
-    } else {
-      iziToast.error({
-        fontSize: 'large',
-        close: false,
-        position: 'topRight',
-        messageColor: 'white',
-        timeout: 2000,
-        backgroundColor: 'red',
-        message: ("Please choose a date in the future")
-      });
-    }
+  const userDate = new Date(selectedDates[0]).getTime();
+  const startDate = Date.now();
+
+  if (userDate > startDate) {
+    startBtn.disabled = false;
+    delta = userDate - startDate;
+    updateClockface(convertMs(delta));
   }
+  else {
+    iziToast.error({
+      fontSize: 'large',
+      close: false,
+      position: 'topRight',
+      messageColor: 'white',
+      timeout: 2000,
+      backgroundColor: 'red',
+      message: ("Please choose a date in the future")
+    });
+  }
+}
 };          
 
 function updateClockface({ days, hours, minutes, seconds }) {
@@ -62,9 +60,19 @@ function timer() {
   if (delta > 0) {
     delta -= 1000;
     updateClockface(convertMs(delta))
-  }
-  else {
+  } else {
     clearInterval(intervalId);
+    iziToast.info({
+      fontSize: 'large',
+      close: false,
+      position: 'topRight',
+      messageColor: 'white',
+      timeout: 2000,
+      backgroundColor: 'gray',
+      message: ("Time's up!")
+    });
+    startBtn.disabled = false;
+    inputfield.disabled = false;
   }
 }
  
@@ -90,8 +98,8 @@ function convertMs(time) {
 }
 
 startBtn.addEventListener('click', () => {
-  
   startBtn.disabled = true;
   inputfield.disabled = true;
+  delta = convertMs(delta).days * 86400000 + convertMs(delta).hours * 3600000 + convertMs(delta).minutes * 60000 + convertMs(delta).seconds * 1000;
   startTimer();
 });
